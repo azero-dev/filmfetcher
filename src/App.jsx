@@ -33,12 +33,17 @@ function useSearch () {
 }
 
 function App() {
+  const [sort, setSort] = useState(false)
   const { search, updateSearch, error } = useSearch()
-  const { movies, getMovies } = useMovies({search})
+  const { movies, getMovies, loading } = useMovies({search, sort})
 
   const handleSubmit = (event) => {
     event.preventDefault()
-    getMovies()
+    getMovies({ search })
+  }
+
+  const handleSort = () => {
+    setSort(!sort)
   }
 
   const handleChange = (event) => {
@@ -51,12 +56,17 @@ function App() {
       <h1>Filmfetcher</h1>
       <form className='form' onSubmit={handleSubmit} >
         <input onChange={handleChange} value={search} name='query' placeholder='Avengers, Star Wars, etc.' />
+        <input type='checkbox' onChange={handleSort} checked={sort} />
         <button type='submit'>Search</button>
       </form>
       {error && <p style={{color: 'red'}}>{error}</p>}
     </header>
     <main>
-      <Movies movies={ movies }/>
+      {
+        loading
+        ? <p>Loading...</p>
+        : <Movies movies={movies} />
+      }
     </main>
     </div>
   )
